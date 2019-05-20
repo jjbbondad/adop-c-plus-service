@@ -1,0 +1,18 @@
+language: node_js
+
+branches:
+  only:
+  - master
+
+node_js: 
+  - "stable"
+
+cache:
+  directories:
+    - "node_modules"
+
+install:
+  - npm install
+  - npm run lint
+
+script: echo "npm test temporarily disabled"

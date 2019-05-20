@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket Bashing</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <style>
+        .container {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .btn {
+            margin-bottom: 20px;
+        }
+        .logs {
+            height: 400px;
+            background-color: #eee;
+        }
+        .progress {
+            overflow: hidden;
+        }
+        #messages {
+            font-family: "Lucida Console", Monaco, monospace;
+            list-style: none;
+            text-align: left;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+            $('button').click(function () {
+                socket.emit('execute', $('#cmd').val());
+                $(this).attr("disabled", "none");
+                $("#messages").html("");
+            });
+            $("#cmd").keyup(function() {
+                $("button").removeAttr("disabled")
+            });
+            socket.on('logs', function(data){
+                $("#progress").css("width", data.donePercent + "%");
+                $('#messages').append($('<li>').text(data));
+            });
+            socket.on('err-logs', function(msg){
+                $('#messages').append($('<li>').text(msg));
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="cmd">Command</label>
+                <input type="text" class="form-control" id="cmd">
+            </div>
+            <button type="button" class="btn btn-primary btn-md">Execute Script</button>
+            <div class="logs pre-scrollable">
+                <h4 style="text-align: center; padding-top: 5px; color: #0a0a0a">Console Output</h4>
+                <ul id="messages"></ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
