@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
+const ansibleRouter = require('./app/routes/v1/ansible');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
