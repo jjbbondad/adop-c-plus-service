@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.group('/api/v1', (router) => {
     router.use('/docker', dockerRouter)
+	router.use('/ansible', ansibleRouter)
 });
 
 app.get('/test', function(req, res) {

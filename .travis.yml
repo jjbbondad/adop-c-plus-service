@@ -6,11 +6,30 @@ branches:
 
 node_js: 
   - "stable"
-
 cache:
   directories:
     - "node_modules"
+    
+services:
+  - docker
 
+before_install:
+  - docker build -t nodetest:1.0 .
+  - docker run -it -d -p 5000:5000 --name node -v /var/run/docker.sock:/var/run/docker.sock nodetest:1.0
+  - sleep 20
+  - nodestatus=$(docker inspect node --format="{{.State.Status}}")
+  - |
+    if [ $nodestatus != "running" ]; then
+      echo "node container is not running properly"
+      exit 1
+    fi
+  - docker run -it -d --name sample alpine
+  - status=$(curl localhost:5000/api/v1/docker/status/sample)
+  - echo $status
+  - stop=$(curl localhost:5000/api/v1/docker/stop/sample) 
+  - start=$(curl localhost:5000/api/v1/docker/start/sample)
+
+  
 install:
   - npm install
   - npm run lint

@@ -4,6 +4,7 @@ RUN apk add python-dev libffi-dev openssl-dev gcc libc-dev make
 RUN pip install docker-compose
 RUN pip install ansible
 COPY . /code
-WORKDIR /code/server
+WORKDIR /code
 RUN npm install
-CMD [ "node", "server.js"]
+RUN npm install node-ansible
+CMD [ "node", "app.js"]
