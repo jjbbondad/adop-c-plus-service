@@ -5,7 +5,9 @@ exports.ansibleStart = function(req, res) {
     promise.then(function(successResult) {
       console.log(successResult.code); // Exit code of the executed command
       console.log(successResult.output) // Standard output/error of the executed command
+	  res.send(successResult.output)
     }, function(error) {
       console.error(error);
+	  res.send(error)
     })
 };
