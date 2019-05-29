@@ -1,6 +1,6 @@
 const ansible = require('node-ansible')
 exports.ansibleStart = function(req, res) {
-    var command = new ansible.AdHoc().module('shell').hosts('local').args("echo 'hello'");
+    var command = new ansible.AdHoc().module('shell').hosts('localhost').args("echo 'hello'");
     var promise = command.exec();
     promise.then(function(successResult) {
       console.log(successResult.code); // Exit code of the executed command
