@@ -3,7 +3,7 @@ const router = require('express').Router();
 const {
     containerStart,
     containerStop,
-    containerStatus
+    containerStatus,
 	composeUp
 } = require('../../controllers/docker');
 
