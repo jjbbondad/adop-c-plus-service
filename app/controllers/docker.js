@@ -34,7 +34,7 @@ exports.containerStatus = function(req, res) {
     });
 };
 
-exports.composeUp = function(req, res) {
+exports.composeUpAll = function(req, res) {
     compose.upAll({ cwd: path.join(__dirname), log: true }).then(function(test) {
         console.log('done')
         res.send(test.err)
