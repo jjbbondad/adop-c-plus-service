@@ -1,5 +1,8 @@
+const path = require('path');
+const compose = require('docker-compose');
 const Dockerode  = require('dockerode');
 const docker  = new Dockerode({ socketPath: '/var/run/docker.sock' });
+
 
 exports.containerStart = function(req, res) {
     docker.getContainer(req.params.id).start(function (err, data) {
