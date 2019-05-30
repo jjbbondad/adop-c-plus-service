@@ -31,14 +31,11 @@ exports.containerStatus = function(req, res) {
     });
 };
 
-// eslint-disable-next-line capitalized-comments
-/*
- * exports.composeUp = function(req, res) {
- *     compose.upAll({ cwd: '', log: true }).then(() => { 
- *         console.log('done')
- *     },
- *     (err) => { 
- *         console.log('something went wrong:', err.message) 
- *     });
- * };
- */
+exports.composeUp = function(req, res) {
+    compose.upAll({ cwd: path.join(__dirname), log: true }).then(function(test) {
+        console.log('done')
+        res.send(test.err)
+    }, function(error) {
+        console.log('something went wrong:', err.message)
+    });
+ };
