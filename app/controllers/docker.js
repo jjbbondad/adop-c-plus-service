@@ -29,7 +29,7 @@ exports.containerStatus = function(req, res) {
         if (err) {
             res.status(500).send(err);
         } else {
-            res.status(200).send({ status: data.State.Status });
+            res.status(200).send(data.State.Status);
         }
     });
 };
