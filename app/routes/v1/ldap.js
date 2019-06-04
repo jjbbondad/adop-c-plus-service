@@ -2,12 +2,12 @@ const router = require('express').Router();
 
 const {
     addUser,
-    RemoveUser,
-    Search,
+    removeUser,
+    search,
 } = require('../../controllers/ldap');
 
-router.get('/add/:id/', addUser);
-router.get('/remove/:id/', RemoveUser);
-router.get('/stop/:id/', Search);
+router.get('/add/:id/:id2/:id3', addUser);
+router.get('/remove/:id/', removeUser);
+router.get('/search/:id/', search);
 
 module.exports = router;
