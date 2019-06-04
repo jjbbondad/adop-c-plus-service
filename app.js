@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
 const ansibleRouter = require('./app/routes/v1/ansible');
+const ldapRouter = require('./app/routes/v1/ldap');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.group('/api/v1', (router) => {
     router.use('/docker', dockerRouter)
     router.use('/ansible', ansibleRouter)
+	router.use('/ldap', ldapRouter)
 });
 
 app.get('/test', function(req, res) {
