@@ -5,30 +5,28 @@ var ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
-exports.addUser = function(req, res) {
-
    ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '500c099813aa2200'}, function(err) {
-	if (err) {
-	    res.status(500).send(err);
-	}
-	else {
-	    res.status(200).send('Bind Success');
-
-	    var attrs = [
-		   { attr: 'objectClass', vals: [ 'inetOrgPerson', 'organizationalPerson', 'person', 'top' ] },
-		   { attr: 'cn', vals: [ req.params.id ] },
-		   { attr: 'displayName', vals: [ req.params.id2 ] },
-		   { attr: 'givenName', vals: [ req.params.id3 ] },
-		   { attr: 'mail', vals: [ req.params.id+'@ldap.example.com' ] },
-		   { attr: 'sn', vals: [ 'User' ] },
-		   { attr: 'uid', vals: [ req.params.id ] }
-	    ]
-
-	    ldap.add('cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com',attrs,function(err){
-            	   res.send('Successully Added User!')
-		});
-	}
    });
+
+exports.addUser = function(req, res) {
+	var attrs = [
+	   { attr: 'objectClass', vals: [ 'inetOrgPerson', 'organizationalPerson', 'person', 'top' ] },
+	   { attr: 'cn', vals: [ req.params.id ] },
+	   { attr: 'displayName', vals: [ req.params.id2 ] },
+	   { attr: 'givenName', vals: [ req.params.id3 ] },
+	   { attr: 'mail', vals: [ req.params.id+'@ldap.example.com' ] },
+	   { attr: 'sn', vals: [ 'User' ] },
+	   { attr: 'uid', vals: [ req.params.id ] }
+        ]
+
+	ldap.add('cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com',attrs,function(err){
+	   if (err) {
+	      res.send(err);
+	   }
+	   else {
+              res.send('Sucessfully Added '+req.params.id);
+	   }
+	});
 };
 
 exports.removeUser = function(req, res) {
@@ -54,7 +52,3 @@ exports.search = function(req, res) {
 	});
 
 };
-
-setTimeout((function() {
-return process.exit(22);
-}), 5000);
