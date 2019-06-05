@@ -5,7 +5,7 @@ var ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
-   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '500c099813aa2200'}, function(err) {
+   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '0774e91cb3961243'}, function(err) {
    });
 
 exports.addUser = function(req, res) {

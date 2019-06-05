@@ -13,6 +13,7 @@ app.set('port', process.env.PORT || 5000)
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.disable('x-powered-by');
 
 app.group('/api/v1', (router) => {
     router.use('/docker', dockerRouter)
