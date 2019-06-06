@@ -4,6 +4,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 const ansible = require('node-ansible');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
