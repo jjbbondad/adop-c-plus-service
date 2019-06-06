@@ -4,10 +4,10 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const ansible = require('node-ansible');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
-const ansibleRouter = require('./app/routes/v1/ansible');
-var fs = require('fs');
+const ldapRouter = require('./app/routes/v1/ldap');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.group('/api/v1', (router) => {
     router.use('/docker', dockerRouter)
-    router.use('/ansible', ansibleRouter)
+    router.use('/ldap', ldapRouter)
 });
 
 app.get('/test', function(req, res) {
@@ -44,7 +44,15 @@ app.get('/api/readData', (req, res) => {
 
 io.on('connection', function(socket) {
     socket.on('execute', (command) => {
-        executeCommand(socket, command);
+      const playbook = new ansible.Playbook().playbook('adop-docker-compose/ansible-playbook-tools/playbook');
+      const promise = playbook.exec();
+      promise.then(function(successResult) {
+        console.log(successResult.code); // Exit code of the executed command
+        console.log(successResult.output) // Standard output/error of the executed command
+        socket.emit('logs', successResult.output);
+      }, function(error) {
+        console.error(error);
+      })
     });
 });
 
