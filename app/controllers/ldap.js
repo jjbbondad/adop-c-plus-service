@@ -47,8 +47,8 @@ exports.search = function(req, res) {
 	search_options = {
 	    base: 'dc=ldap,dc=example,dc=com',
 	    scope: LDAP.SUBTREE,
-	    filter: '(objectClass='+req.params.id+')',
-	    attrs: '*'
+	    filter: '(objectClass='+req.params.class+')',
+	    attrs: req.params.cn
    	}
 
 	ldap.search(search_options, function(err, data){
