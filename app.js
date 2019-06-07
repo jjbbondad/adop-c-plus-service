@@ -8,6 +8,7 @@ const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
 const ansibleRouter = require('./app/routes/v1/ansible');
 const ldapRouter = require('./app/routes/v1/ldap');
+var fs = require('fs');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
@@ -23,6 +24,27 @@ app.group('/api/v1', (router) => {
 
 app.get('/test', function(req, res) {
     res.sendFile(`${__dirname}/app/views/test.html`);
+});
+
+app.get('/api/getData', function(req, res) {
+ res.json(req.query.name)
+ fs.appendFile('tools_selection.json', req.query.name, function (err) {
+     if (err) throw err;
+     console.log('Saved!');
+ });
+});
+
+app.get('/api/readData', (req, res) => {
+ var jsonfile;
+ fs.readFile('tools_selection.json', 'utf8', function (err, data) {
+    if (err) throw err
+    jsonfile = JSON.parse(data)
+    console.log(jsonfile)
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.end(data);
+ });
+ // console.log(data)
 });
 
 io.on('connection', function(socket) {
