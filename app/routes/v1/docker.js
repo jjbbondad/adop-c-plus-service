@@ -4,7 +4,7 @@ const {
     containerStart,
     containerStop,
     containerStatus,
-	composeUpAll
+    composeUpAll,
 } = require('../../controllers/docker');
 
 router.get('/start/:id/', containerStart);
