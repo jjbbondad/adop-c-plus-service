@@ -9,7 +9,6 @@ const ansible = require('node-ansible');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
 const ldapRouter = require('./app/routes/v1/ldap');
-var fs = require('fs');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
