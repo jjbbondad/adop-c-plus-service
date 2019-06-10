@@ -9,7 +9,7 @@ const {
 
 router.get('/add/:id/:password', addUser);
 router.get('/remove/:id/', removeUser);
-router.get('/search/:id/', search);
+router.get('/search/:class/:cn/', search);
 router.get('/modify/:id/:group/:ops/', modify);
 
 module.exports = router;

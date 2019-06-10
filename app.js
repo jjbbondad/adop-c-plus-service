@@ -9,11 +9,13 @@ const ansible = require('node-ansible');
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
 const ldapRouter = require('./app/routes/v1/ldap');
+var fs = require('fs');
 
 app.set('port', process.env.PORT || 5000)
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.disable('x-powered-by');
 
 app.group('/api/v1', (router) => {
     router.use('/docker', dockerRouter)
@@ -25,23 +27,25 @@ app.get('/test', function(req, res) {
 });
 
 app.get('/api/getData', function(req, res) {
-    res.json(req.query.name)
-    fs.appendFile('tools_selection.json', JSON.stringify(JSON.parse(req.query.name)), function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-    });
-})
+ res.json(req.query.name)
+ fs.appendFile('tools_selection.json', req.query.name, function (err) {
+     if (err) throw err;
+     console.log('Saved!');
+ });
+});
 
 app.get('/api/readData', (req, res) => {
-    var jsonfile;
-    fs.readFile('tools_selection.json', 'utf8', function (err, data) {
+ var jsonfile;
+ fs.readFile('tools_selection.json', 'utf8', function (err, data) {
     if (err) throw err
-    jsonfile = JSON.stringify(data)
+    jsonfile = JSON.parse(data)
     console.log(jsonfile)
-    res.json(data)
-    });
-    // console.log(data)
-})
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.end(data);
+ });
+ // console.log(data)
+});
 
 io.on('connection', function(socket) {
     socket.on('execute', (command) => {
