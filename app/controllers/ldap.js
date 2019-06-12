@@ -1,7 +1,7 @@
 const path = require('path');
-
-var LDAP = require('ldap-client');
-var ldap = new LDAP({
+const fs = require('fs');
+const LDAP = require('ldap-client');
+const ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
@@ -42,6 +42,64 @@ exports.removeUser = function(req, res) {
 	   }
 	});
 };
+
+exports.search = function(req, res) {
+	search_options = {
+	    base: 'dc=ldap,dc=example,dc=com',
+	    scope: LDAP.SUBTREE,
+	    filter: '(objectClass='+req.params.class+')',
+	    attrs: req.params.cn
+   	}
+
+	ldap.search(search_options, function(err, data){
+	    res.send(data)
+	});
+};
+
+exports.searchAllUsers = function(req, res) {
+    user_search_options = {
+        base: 'dc=ldap,dc=example,dc=com',
+        scope: LDAP.SUBTREE,
+        filter: '(&(objectClass=inetOrgPerson)(cn=*))',
+        attrs: '*'
+    }
+    group_name_regex = /cn=([a-zA-Z0-9]+),ou=groups/;
+    var obj = {
+      variables: []
+    };
+	ldap.search(user_search_options, function(err, data){
+		data.forEach(function(item) {
+		group_search_options = {
+			base: 'dc=ldap,dc=example,dc=com',
+			scope: LDAP.SUBTREE,
+			filter: '(&(objectClass=inetOrgPerson)(cn='+ item.cn +'))',
+			attrs: '+'
+		};
+		ldap.search(group_search_options, function(err, data) {
+			 array = data[0].memberOf;
+			 groupsOf = [];
+			 array.forEach(function(item) {
+				group = item.match(group_name_regex);
+				groupsOf.push(group[1]);
+			 })
+			 console.log(item.cn[0]);
+			 console.log(groupsOf);
+			 groupsval = JSON.stringify(groupsOf);
+			 obj.variables.push({user: item.cn[0], groups: groupsOf});
+			 console.log(obj);
+			 json = JSON.stringify(obj);
+			  fs.writeFile("output.json", json, 'utf8', function (err) {
+				if (err) {
+				   console.log("An error occured while writing JSON Object to File.");
+					return console.log(err);
+				}
+			  });
+		   });
+	 });
+		res.send('Created JSON file');
+	});
+};
+
 
 exports.search = function(req, res) {
 	search_options = {
