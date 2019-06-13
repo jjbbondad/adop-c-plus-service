@@ -5,7 +5,7 @@ var ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
-   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '0774e91cb3961243'}, function(err) {
+   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '8e6092e4b8a93665'}, function(err) {
    });
 
 exports.addUser = function(req, res) {
@@ -73,3 +73,22 @@ exports.modify = function(req, res) {
            }
         });
 };
+
+exports.changepassword = function(req, res) {
+
+        var attrs = [
+           { op: 'replace',
+             attr: 'userPassword',
+             vals: [ req.params.password ] }
+        ]
+
+        ldap.modify('cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com',attrs,function(err){
+           if (err) {
+              res.send('User does not exist');
+           }
+           else {
+              res.send(req.params.id+ ' changed password successfully.');
+           }
+        });
+};
+
