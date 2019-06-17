@@ -66,6 +66,19 @@ app.get('/api/readData', (req, res) => {
  // console.log(data)
 });
 
+app.get('/api/readLdapUserData', (req, res) => {
+ var jsonfile;
+ fs.readFile('output.json', 'utf8', function (err, data) {
+    if (err) { res.send("File not available") }
+    else {
+    jsonfile = JSON.parse(data)
+    console.log(jsonfile)
+    res.setHeader('Content-Type', 'application/json');
+    res.end(data);
+    }
+ });
+ // console.log(data)
+});
 io.on('connection', function(socket) {
     socket.on('execute', (command) => {
       const playbook = new ansible.Playbook().playbook('adop-docker-compose/ansible-playbook-tools/playbook');
