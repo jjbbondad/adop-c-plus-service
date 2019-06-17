@@ -63,10 +63,9 @@ exports.searchAllUsers = function(req, res) {
         filter: '(&(objectClass=inetOrgPerson)(cn=*))',
         attrs: '*'
     }
-    group_name_regex = /cn=([a-zA-Z0-9]+),ou=groups/;
-    var obj = {
-      variables: []
-    };
+    group_name_regex = /cn=([a-zA-Z0-9_]+),ou=groups/;
+    var obj = [
+    ];
 	ldap.search(user_search_options, function(err, data){
 		data.forEach(function(item) {
 		group_search_options = {
@@ -80,12 +79,13 @@ exports.searchAllUsers = function(req, res) {
 			 groupsOf = [];
 			 array.forEach(function(item) {
 				group = item.match(group_name_regex);
-				groupsOf.push(group[1]);
+                groupname = group[1];
+				groupsOf.push(groupname);
 			 })
 			 console.log(item.cn[0]);
 			 console.log(groupsOf);
 			 groupsval = JSON.stringify(groupsOf);
-			 obj.variables.push({user: item.cn[0], groups: groupsOf});
+			 obj.push({user: item.cn[0], groups: groupsOf});
 			 console.log(obj);
 			 json = JSON.stringify(obj);
 			  fs.writeFile("output.json", json, 'utf8', function (err) {
