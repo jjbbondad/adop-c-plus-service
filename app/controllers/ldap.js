@@ -5,7 +5,7 @@ const ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
-   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '8e6092e4b8a93665'}, function(err) {
+   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: 'bc6a75617a2310321'}, function(err) {
    });
 
 exports.addUser = function(req, res) {
@@ -60,7 +60,7 @@ exports.searchAllUsers = function(req, res) {
     user_search_options = {
         base: 'dc=ldap,dc=example,dc=com',
         scope: LDAP.SUBTREE,
-        filter: '(&(objectClass=inetOrgPerson)(cn=*))',
+        filter: '(objectClass=inetOrgPerson)',
         attrs: '*'
     }
     group_name_regex = /cn=([a-zA-Z0-9]+),ou=groups/;
@@ -72,7 +72,7 @@ exports.searchAllUsers = function(req, res) {
 		group_search_options = {
 			base: 'dc=ldap,dc=example,dc=com',
 			scope: LDAP.SUBTREE,
-			filter: '(&(objectClass=inetOrgPerson)(cn='+ item.cn +'))',
+			filter: '(&(objectClass=groupOfNames)(cn='+ item.cn +'))',
 			attrs: '+'
 		};
 		ldap.search(group_search_options, function(err, data) {

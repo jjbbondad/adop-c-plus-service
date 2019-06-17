@@ -4,7 +4,7 @@ const {
     addUser,
     removeUser,
     search,
-	searchAllUsers,
+    searchAllUsers,
     modify,
     changepassword,
 } = require('../../controllers/ldap');
