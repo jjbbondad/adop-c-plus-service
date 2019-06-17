@@ -43,19 +43,6 @@ exports.removeUser = function(req, res) {
 	});
 };
 
-exports.search = function(req, res) {
-	search_options = {
-	    base: 'dc=ldap,dc=example,dc=com',
-	    scope: LDAP.SUBTREE,
-	    filter: '(objectClass='+req.params.class+')',
-	    attrs: req.params.cn
-   	}
-
-	ldap.search(search_options, function(err, data){
-	    res.send(data)
-	});
-};
-
 exports.searchAllUsers = function(req, res) {
     user_search_options = {
         base: 'dc=ldap,dc=example,dc=com',
@@ -64,22 +51,24 @@ exports.searchAllUsers = function(req, res) {
         attrs: '*'
     }
     group_name_regex = /cn=([a-zA-Z0-9_]+),ou=groups/;
-    var obj = [
-    ];
+    var obj = [];
 	ldap.search(user_search_options, function(err, data){
 		data.forEach(function(item) {
+		console.log(item.cn)
 		group_search_options = {
 			base: 'dc=ldap,dc=example,dc=com',
 			scope: LDAP.SUBTREE,
-			filter: '(&(objectClass=groupOfNames)(cn='+ item.cn +'))',
+			filter: '(&(objectClass=inetOrgPerson)(cn='+ item.cn +'))',
 			attrs: '+'
 		};
+	        console.log(group_search_options)
 		ldap.search(group_search_options, function(err, data) {
+                         console.log(data);
 			 array = data[0].memberOf;
 			 groupsOf = [];
 			 array.forEach(function(item) {
-				group = item.match(group_name_regex);
-                groupname = group[1];
+			 group = item.match(group_name_regex);
+	                 groupname = group[1];
 				groupsOf.push(groupname);
 			 })
 			 console.log(item.cn[0]);
@@ -106,7 +95,7 @@ exports.search = function(req, res) {
 	    base: 'dc=ldap,dc=example,dc=com',
 	    scope: LDAP.SUBTREE,
 	    filter: '(objectClass='+req.params.class+')',
-	    attrs: req.params.cn
+	    attrs: '*'
    	}
 
 	ldap.search(search_options, function(err, data){
@@ -118,7 +107,7 @@ exports.modify = function(req, res) {
 
         var attrs = [
            { op: req.params.ops,
-	     attr: 'uniqueMember',
+	     attr: 'member',
 	     vals: [ 'cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com' ] }
         ]
 
