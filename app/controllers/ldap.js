@@ -69,7 +69,7 @@ exports.searchAllUsers = function(req, res) {
 			 array.forEach(function(item) {
 			 group = item.match(group_name_regex);
 	                 groupname = group[1];
-				groupsOf.push(groupname);
+			 groupsOf.push(groupname);
 			 })
 			 console.log(item.cn[0]);
 			 console.log(groupsOf);
@@ -123,19 +123,35 @@ exports.modify = function(req, res) {
 
 exports.changepassword = function(req, res) {
 
-        var attrs = [
-           { op: 'replace',
-             attr: 'userPassword',
-             vals: [ req.params.password ] }
-        ]
+    user_search_options = {
+        base: 'dc=ldap,dc=example,dc=com',
+        scope: LDAP.SUBTREE,
+        filter: '(&(objectClass=inetOrgPerson)(cn='+req.params.id+'))',
+        attrs: '*'
+    }
+    var obj = [];
+        ldap.search(user_search_options, function(err, data){
+                data.forEach(function(item) {
+                   if(item.userPassword == req.params.opassword)
+                   {
+                        var attrs = [
+                           { op: 'replace',
+                             attr: 'userPassword',
+                             vals: [ req.params.password ] }
+                        ]
 
-        ldap.modify('cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com',attrs,function(err){
-           if (err) {
-              res.send('User does not exist');
-           }
-           else {
-              res.send(req.params.id+ ' changed password successfully.');
-           }
+                        ldap.modify('cn='+req.params.id+',ou=people,dc=ldap,dc=example,dc=com',attrs,function(err){
+                           if (err) {
+                                res.send('User does not exist');
+                           }
+                           else {
+                              res.send(req.params.id+ ' changed password successfully.');
+                        }
+                        });
+                   }
+                   else {
+                        res.send('Incorrect Password');
+                   }
+                });
         });
 };
-

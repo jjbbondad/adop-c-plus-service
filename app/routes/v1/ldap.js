@@ -14,6 +14,6 @@ router.get('/remove/:id/', removeUser);
 router.get('/search/:class/:cn/', search);
 router.get('/searchAllUsers', searchAllUsers);
 router.get('/modify/:id/:group/:ops/', modify);
-router.get('/changepass/:id/:password', changepassword);
+router.get('/changepass/:id/:password/:opassword/', changepassword);
 
 module.exports = router;
