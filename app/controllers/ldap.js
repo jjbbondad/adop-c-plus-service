@@ -5,7 +5,7 @@ const ldap = new LDAP({
     uri: 'ldap://ldap:389',
 });
 
-   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: 'bc6a75617a2310321'}, function(err) {
+   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '123qwe456rty'}, function(err) {
    });
 
 exports.addUser = function(req, res) {
@@ -118,6 +118,50 @@ exports.modify = function(req, res) {
            else {
               res.send(req.params.ops+': '+req.params.id+' => '+req.params.group);
            }
+        });
+};
+
+exports.authUser = function(req, res) {
+    user_search_options = {
+        base: 'dc=ldap,dc=example,dc=com',
+        scope: LDAP.SUBTREE,
+        filter: '(&(objectClass=inetOrgPerson)(cn='+req.params.id+'))',
+        attrs: '*'
+    }
+        ldap.search(user_search_options, function(err, data){
+			if(data.length == 0) { res.send("User does not exist.") } else {
+            data.forEach(function(item) {
+                   if(item.userPassword == req.params.password)
+                   {
+                       //User validation start
+			user_validation = {
+				base: 'dc=ldap,dc=example,dc=com',
+				scope: LDAP.SUBTREE,
+				filter: '(cn=administrators)',
+				attrs: '*'
+			}
+			var members = [];
+				ldap.search(user_validation, function(err, data){
+						data.forEach(function(item) {
+						members = item.uniqueMember;
+				 });
+
+				 for(var i = 0; i < members.length; i++) {
+				  var user = members[i].replace('cn=','').replace(/,ou.*/g, '');
+				  if(user == req.params.id) {
+					res.send('ADMIN');
+					break;
+				  }
+					console.log("Stayin alive")
+				 }
+				});
+                       //User validation end
+                   }
+                   else {
+                        res.send('Incorrect Password');
+                   }
+                });
+			}
         });
 };
 
