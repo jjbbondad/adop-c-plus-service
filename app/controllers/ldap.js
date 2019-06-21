@@ -141,6 +141,7 @@ exports.authUser = function(req, res) {
 				attrs: '*'
 			}
 			var members = [];
+			var holder;
 				ldap.search(user_validation, function(err, data){
 						data.forEach(function(item) {
 						members = item.uniqueMember;
@@ -152,7 +153,11 @@ exports.authUser = function(req, res) {
 					res.send('ADMIN');
 					break;
 				  }
-					console.log("Stayin alive")
+				  holder = i+1;
+				 }
+				 if(holder == members.length)
+				 {
+					res.send('User not allowed. Please contact Administrator.');
 				 }
 				});
                        //User validation end
