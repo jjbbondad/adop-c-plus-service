@@ -5,6 +5,9 @@ const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const ansible = require('node-ansible');
+const Dockerode  = require('dockerode');
+const docker  = new Dockerode({ socketPath: '/var/run/docker.sock' });
+
 const { executeCommand } = require('./app/utils/commandRunner');
 const dockerRouter = require('./app/routes/v1/docker');
 const ldapRouter = require('./app/routes/v1/ldap');
@@ -27,7 +30,7 @@ app.get('/test', function(req, res) {
 });
 
 io.on('connection', function(socket) {
-    socket.on('execute', (command) => {
+    socket.on('ansible', (command) => {
       const playbook = new ansible.Playbook().playbook('adop-docker-compose/ansible-playbook-tools/playbook');
       const promise = playbook.exec();
       promise.then(function(successResult) {
@@ -37,6 +40,12 @@ io.on('connection', function(socket) {
       }, function(error) {
         console.error(error);
       })
+    });
+    socket.on('container', (command) => {
+      docker.getContainer('proxy').logs({ stdout: true, stderr: true, follow: false },function (err, data) {
+        console.log(data);
+        socket.emit('containerlogs', data);
+      });
     });
 });
 
