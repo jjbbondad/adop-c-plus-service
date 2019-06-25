@@ -2,10 +2,10 @@ const path = require('path');
 const fs = require('fs');
 const LDAP = require('ldap-client');
 const ldap = new LDAP({
-    uri: 'ldap://ldap:389',
+    uri: 'ldap://'+process.env.LDAP_SERVER,
 });
 
-   ldap.bind({binddn: 'cn=admin,dc=ldap,dc=example,dc=com', password: '123qwe456rty'}, function(err) {
+   ldap.bind({binddn: process.env.LDAP_USERNAME, password: process.env.LDAP_PASSWORD}, function(err) {
    });
 
 exports.addUser = function(req, res) {
